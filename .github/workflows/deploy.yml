@@ -1,27 +1,28 @@
-name: Validate and Deploy to GitHub Pages
+name: Test and Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main # main 브랜치에 push가 발생할 때 실행
+      - main # Run workflow on push to the main branch
 
 jobs:
-  validate:
+  test:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Validate HTML files
-      run: |
-        if ! find . -name "*.html" | xargs -I{} tidy -q -e {}; then
-          echo "HTML validation failed"
-          exit 1
-        fi
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - name: Run JavaScript test file
+      run: node test/test.js # Run the JavaScript test file
 
   deploy:
-    needs: validate # validate 작업이 성공해야만 실행됨
+    needs: test # Only run this job if the test job succeeds
     runs-on: ubuntu-latest
 
     steps:
@@ -32,4 +33,4 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./ # HTML 파일이 위치한 디렉토리
+        publish_dir: ./ # Directory containing HTML files
