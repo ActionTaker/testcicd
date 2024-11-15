@@ -24,9 +24,9 @@ jobs:
 
     # Upload build output as an artifact
     - name: Upload artifact for GitHub Pages
-      uses: actions/upload-pages-artifact@v2
+      id: deployment
+      uses: actions/upload-pages-artifact@v3
       with:
-        name: github-page # Name of the artifact (must match in deploy step)
         path: ./ # The directory containing the files to deploy
 
   # Deploy job
