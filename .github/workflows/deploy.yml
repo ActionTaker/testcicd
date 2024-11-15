@@ -24,13 +24,18 @@ jobs:
   deploy:
     needs: test # Only run this job if the test job succeeds
     runs-on: ubuntu-latest
+    permissions:
+      pages: write      # Grant permission to write to GitHub Pages
+      id-token: write   # Grant permission to verify the deployment origin
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./ # Directory containing HTML files
+      id: deployment
+      uses: actions/deploy-pages@v4 # Use the latest version for deploying to Pages
