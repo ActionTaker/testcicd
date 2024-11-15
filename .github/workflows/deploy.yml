@@ -6,7 +6,8 @@ on:
       - main # Run workflow on push to the main branch
 
 jobs:
-  test:
+  # Test and build job
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,9 +22,15 @@ jobs:
     - name: Run JavaScript test file
       run: node test/test.js # Run the JavaScript test file
 
+    # Upload build output as an artifact
+    - name: Upload artifact for GitHub Pages
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: ./ # The directory containing the files to deploy (e.g., ./ for root directory)
+
+  # Deploy job
   deploy:
-    needs: test # Only run this job if the test job succeeds
-    runs-on: ubuntu-latest
+    needs: build # Only run this job if the build job succeeds
     permissions:
       pages: write      # Grant permission to write to GitHub Pages
       id-token: write   # Grant permission to verify the deployment origin
@@ -32,10 +39,9 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+    runs-on: ubuntu-latest
 
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4 # Use the latest version for deploying to Pages
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 # Use the latest version for deploying to Pages
