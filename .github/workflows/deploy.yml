@@ -6,7 +6,7 @@ on:
       - main # Run workflow on push to the main branch
 
 jobs:
-  # Test and build job
+  # Build and test job
   build:
     runs-on: ubuntu-latest
 
@@ -26,7 +26,8 @@ jobs:
     - name: Upload artifact for GitHub Pages
       uses: actions/upload-pages-artifact@v1
       with:
-        path: ./ # The directory containing the files to deploy (e.g., ./ for root directory)
+        path: ./ # The directory containing the files to deploy
+        name: github-pages # Name of the artifact (must match in deploy step)
 
   # Deploy job
   deploy:
@@ -44,4 +45,6 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # Use the latest version for deploying to Pages
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages # Must match the name used in upload
