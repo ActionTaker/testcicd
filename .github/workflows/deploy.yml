@@ -27,7 +27,7 @@ jobs:
       if: success() # Only upload if the test passed
       uses: actions/upload-pages-artifact@v1
       with:
-        path: ./ # The directory containing files to deploy (adjust if needed)
+        path: "./coverage" # The directory containing files to deploy (adjust if needed)
 
   # Deployment job
   deploy:
