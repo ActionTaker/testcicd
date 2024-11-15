@@ -25,9 +25,9 @@ jobs:
     # Upload build output as an artifact (if applicable)
     - name: Upload artifact for GitHub Pages
       if: success() # Only upload if the test passed
-      uses: actions/upload-pages-artifact@v1
+      uses: actions/upload-pages-artifact@v4
       with:
-        path: "./coverage" # The directory containing files to deploy (adjust if needed)
+        path: "./" # The directory containing files to deploy (adjust if needed)
 
   # Deployment job
   deploy:
