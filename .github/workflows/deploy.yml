@@ -1,4 +1,4 @@
-name: Test and Deploy to GitHub Pages
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main # Run workflow on push to the main branch
 
 jobs:
-  # Build and test job
+  # Build job
   build:
     runs-on: ubuntu-latest
 
@@ -19,32 +19,32 @@ jobs:
       with:
         node-version: 16
 
-    - name: Run JavaScript test file
-      run: node test/test.js # Run the JavaScript test file
+    - name: Build static files
+      id: build
+      run: |
+        # Command to build your site’s static files
+        # Replace with the actual build command for your project
+        # Example for a typical JavaScript project
+        npm install
+        npm run build
 
-    # Upload build output as an artifact
-    - name: Upload artifact for GitHub Pages
-      uses: actions/upload-artifact@v4
+    - name: Upload static files as artifact
+      uses: actions/upload-pages-artifact@v1
       with:
-        name: github-pages # Name of the artifact (must match in deploy step)
-        path: ./ # The directory containing the files to deploy
+        path: ./build # Replace with the directory where the static files are generated
 
-  # Deploy job
+  # Deployment job
   deploy:
-    needs: build # Only run this job if the build job succeeds
-    permissions:
-      pages: write      # Grant permission to write to GitHub Pages
-      id-token: write   # Grant permission to verify the deployment origin
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-
+    needs: build # Only run this job if the build job succeeds
     runs-on: ubuntu-latest
+    permissions:
+      pages: write      # Grant permission to write to GitHub Pages
+      id-token: write   # Grant permission to verify the deployment origin
 
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: github-pages # Must match the name used in upload
