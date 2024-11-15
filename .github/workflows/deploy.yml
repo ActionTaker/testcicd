@@ -1,0 +1,35 @@
+name: Validate and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 push가 발생할 때 실행
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Validate HTML files
+      run: |
+        if ! find . -name "*.html" | xargs -I{} tidy -q -e {}; then
+          echo "HTML validation failed"
+          exit 1
+        fi
+
+  deploy:
+    needs: validate # validate 작업이 성공해야만 실행됨
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./ # HTML 파일이 위치한 디렉토리
